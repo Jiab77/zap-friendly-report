@@ -1,0 +1,22 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+    min-height: 50vh;
+}
+
+i.material-icons {
+    vertical-align: middle;
+}
+
+.parallax-container {
+    height: 50vh;
+}
+
+blockquote {
+    border-left-color: #0091ea;
+}
