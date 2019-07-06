@@ -14,6 +14,15 @@ What's missing:
 
 > Pictures are subject to changes during the development. I will try to keep them updated.
 
+# Charts
+Charts are provided by an open-source project named [eCharts](https://echarts.apache.org).
+
+## Themes
+Charts themes are generated and downloaded from https://echarts.baidu.com/theme-builder/. Once downloaded, modify the following files:
+
+ * `index.html`: Add a new `javascript` include line to the end of the file. (_next to the others already existing_)
+ * `main.js`: Replace the defined `theme` names by the new one.
+
 # Feedback / Discussions
 If you want to send any feedback or having any ideas you want to share regarding this project, feel free to check the dedicated group on Google: https://groups.google.com/forum/#!msg/zaproxy-users/d7sQrlvR0Tg/SkflKmq1BAAJ or the dedicated thread on Twitter: https://twitter.com/psiinon/status/1141352908266659840
 
