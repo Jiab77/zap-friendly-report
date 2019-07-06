@@ -10,7 +10,12 @@ What's missing:
  * Fix charts `style` issues
 
 # Preview
-
+![image](https://user-images.githubusercontent.com/9881407/60761913-7a886680-a053-11e9-9903-29deeeab3533.png)
+![image](https://user-images.githubusercontent.com/9881407/60761921-98ee6200-a053-11e9-95c6-8b7095a579ce.png)
+![image](https://user-images.githubusercontent.com/9881407/60761926-bae7e480-a053-11e9-9e58-e505310ace11.png)
+![image](https://user-images.githubusercontent.com/9881407/60761936-d0f5a500-a053-11e9-8e2a-a9679c120886.png)
+![image](https://user-images.githubusercontent.com/9881407/60761939-f1bdfa80-a053-11e9-9908-0d972d6379e7.png)
+![image](https://user-images.githubusercontent.com/9881407/60761951-524d3780-a054-11e9-800e-1e4c1bffebea.png)
 
 > Pictures are subject to changes during the development. I will try to keep them updated.
 
