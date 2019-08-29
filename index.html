@@ -1,59 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Default Metas -->
-    <meta charset="utf-8">
+	<!-- Default Metas -->
+	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="x-dns-prefetch-control" content="on">
-    
+	<meta http-equiv="x-dns-prefetch-control" content="on">
+	
 	<!-- Mobile Support -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
 	<!-- SEO -->
 	<meta name="author" content="Jonathan Barda (@Jiab77)">
-	<meta name="description" content="ZAP Proxy Reports, Converted from XML to JSON and Material Design">
-    <meta name="keywords" content="ZAP, Proxy, Reports, XML, JSON, Material, Design">
-    
+	<meta name="description" content="OWASP ZAP Reports, Converted from XML to JSON and Material Design">
+	<meta name="keywords" content="OWASP, ZAP, Reports, XML, JSON, Material, Design">
+	
 	<!-- Robots Metas -->
 	<meta name="robots" content="noindex,nofollow,nosnippet,noodp,noarchive,noimageindex">
-    <meta name="google" content="nositelinkssearchbox">
+	<meta name="google" content="nositelinkssearchbox">
 
-    <!-- Pre-Things -->
+	<!-- Pre-Things -->
 	<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
 	<link rel="dns-prefetch" href="//fonts.gstatic.com">
 	<link rel="dns-prefetch" href="//www.google.com">
-    <link rel="dns-prefetch" href="//picsum.photos">
+	<link rel="dns-prefetch" href="//picsum.photos">
 
 	<!-- Import Google Icon Font -->
 	<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" media="all">
 
+	<!-- Import FontAwesome Icon Font -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/fontawesome.min.css" media="all">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/brands.min.css" media="all">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/solid.min.css" media="all">
+
 	<!-- Import Normalizecss -->
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" media="all">
-    
+	<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" media="all">
+	
 	<!-- Import Materialize -->
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css" media="screen,projection">
-    
-	<!-- Import CSS Animations -->
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css" media="screen,projection">
-    
+	<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css" media="screen,projection">
+	
 	<!-- Import Style -->
-    <link type="text/css" rel="stylesheet" href="main.css" media="all">
-    
-    <title>ZAP Proxy &ndash; Report, Converted from XML to JSON and Material Design</title>
+	<link type="text/css" rel="stylesheet" href="main.css" media="all">
+	
+	<title>ZAP &ndash; Friendly Report, Converted from XML to JSON and Material Design</title>
 </head>
 <body class="grey lighten-5 grey-text text-darken-3">
-    <header id="top" class="scrollspy">
-        <div class="navbar-fixed">
-            <nav class="grey darken-4">
-                <div class="nav-wrapper">
-                    <div class="brand-logo">
-                        <a href="#!"><i class="material-icons hide-on-med-and-down">assessment</i>ZAP Proxy Friendly Reports</a>
-                        <span class="hide-on-med-and-down" style="font-size: 12px; vertical-align: middle;">&ndash;&nbsp;The OWASP Zed Attack Proxy</small>
-                    </div>
-                    <a href="#!" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-                    <ul class="right hide-on-med-and-down">
-                        <li>
+	<header id="top" class="scrollspy">
+		<div class="navbar-fixed">
+			<nav class="grey darken-4">
+				<div class="nav-wrapper">
+					<div class="brand-logo">
+						<a href="">
+							<i class="material-icons hide-on-med-and-down">assessment</i>
+							<span class="hide-on-med-and-up">ZAP Reports</span>
+							<span class="hide-on-small-only">ZAP Friendly Reports</span>
+						</a>
+						<span class="hide-on-med-and-down" style="font-size: 12px; vertical-align: middle;">&ndash;&nbsp;The OWASP Zed Attack Proxy</small>
+					</div>
+					<a href="#!" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+					<ul class="right hide-on-med-and-down">
+						<li>
 							<form id="theme-selector-form">
 								<div class="switch">
 									<label class="white-text">
@@ -65,122 +71,186 @@
 								</div>
 							</form>
 						</li>
-                        <li><a href="#!" onclick="window.location.reload();" class="tooltipped" data-position="bottom" data-tooltip="Refresh"><i class="material-icons">refresh</i></a></li>
-                        <li><a href="#!"><i class="material-icons">more_vert</i></a></li>
-                    </ul>
-                    <ul class="side-nav" id="mobile-demo">
-                        <li><a href="#!" onclick="window.location.reload();">Refresh</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-    </header>
-    <main>
-        <div id="dyn-container" class="container">
-            <p class="flow-text">Click on the button to redistribute the space.</p>
-            <p><a href="#!" id="toggle-container" class="waves-effect waves-light btn light-blue accent-4 white-text">Enlarge</a></p>
-            <fieldset>
-                <legend>Report Source</legend>
-                <div class="row" style="margin-bottom: 0;">
-                    <div class="col s12">
-                        <ul class="tabs tabs-fixed-width z-depth-1">
-                            <li class="tab col s3"><a class="light-blue-text text-accent-4 active" href="#report-url">By URL</a></li>
-                            <li class="tab col s3"><a class="light-blue-text text-accent-4" href="#report-upload">By Upload</a></li>
-                            <li class="tab col s3"><a class="light-blue-text text-accent-4" href="#report-string">By String</a></li>
-                        </ul>
-                    </div>
-                    <div id="report-url" class="col s12">
-                        <form id="report-url-form" style="padding: 10px 5px 0px 5px;">
-                            <div class="row">
-                                <div class="input-field col s10">
-                                    <input type="url" id="report-url-field" placeholder="Enter URL here" class="validate">
-                                    <label for="report-url-field">By URL</label>
-                                </div>
-                                <div class="input-field col s2 center-align">
-                                    <input type="submit" class="waves-effect waves-light btn light-blue accent-4 white-text" value="Send">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div id="report-upload" class="col s12">
-                        <form id="report-upload-form" style="padding: 10px 5px 0px 5px;">
-                            <div class="row">
-                                <div class="file-field input-field col s10">
-                                    <div class="waves-effect waves-light btn light-blue accent-4 white-text">
-                                        <span>File</span>
-                                        <input type="file">
-                                    </div>
-                                    <div class="file-path-wrapper">
-                                        <input type="text" id="report-upload-field" placeholder="Specify an XML file" class="file-path validate">
-                                    </div>
-                                </div>
-                                <div class="input-field col s2 center-align">
-                                    <input type="submit" class="waves-effect waves-light btn light-blue accent-4 white-text" value="Send">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div id="report-string" class="col s12">
-                        <form id="report-string-form" style="padding: 10px 5px 0px 5px;">
-                            <div class="row">
-                                <div class="input-field col s10">
-                                    <textarea id="report-string-field" class="materialize-textarea" placeholder="Paste XML string here"></textarea>
-                                    <label for="report-string-field">By String</label>
-                                </div>
-                                <div class="input-field col s2 center-align">
-                                    <input type="submit" class="waves-effect waves-light btn light-blue accent-4 white-text" value="Send">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </fieldset>
-            <fieldset>
-                <legend>Converted Report</legend>
-                <div class="progress blue lighten-5" style="display: none;">
-                    <div class="indeterminate light-blue"></div>
-                </div>
-                <div id="report-container"></div>
-            </fieldset>
-        </div>
-    </main>
-    <footer class="page-footer grey darken-4" style="margin-top: 2rem;">
-        <div class="container">
-            <div class="row">
-                <div class="col l6 s12">
-                    <h5 class="white-text">ZAP Proxy Friendly Reports</h5>
-                    <p class="grey-text text-lighten-4">Designed to ease the display and understanding of your reports.</p>
-                </div>
-                <div class="col l4 offset-l2 s12">
-                    <h5 class="white-text">Links</h5>
-                    <ul>
-                        <li><a class="grey-text text-lighten-3" href="https://www.owasp.org/index.php/Main_Page" target="_blank">OWASP</a></li>
-                        <li><a class="grey-text text-lighten-3" href="https://www.zaproxy.org/" target="_blank">ZAP</a></li>
-                        <li><a class="grey-text text-lighten-3" href="https://github.com/Jiab77/zaproxy-friendly-report" target="_blank">Project</a></li>
-                        <li><a class="grey-text text-lighten-3" href="https://github.com/Jiab77/zaproxy-friendly-report/issues/new" target="_blank">Open an issue</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="footer-copyright">
-            <div class="container">
-                © 2019 &ndash; <a href="https://github.com/jiab77" target="_blank">Jonathan Barda</a>
-                <a class="grey-text text-lighten-4 right" href="https://gist.github.com/jiab77">My gists</a>
-            </div>
-        </div>
+						<li><a href="#!" class="dropdown-button" data-activates="app-menu" data-hover="false" data-belowOrigin="true"><i class="material-icons tooltipped" data-position="bottom" data-tooltip="Menu">more_vert</i></a></li>
+					</ul>
+					<ul id="app-menu" class="dropdown-content">
+						<li><a href="#!" class="light-blue-text text-accent-4" onclick="window.location.reload();"><i class="material-icons">refresh</i>Reload</a></li>
+						<li class="divider"></li>
+						<li><a href="#!" class="light-blue-text text-accent-4">Français</a></li>
+						<li><a href="#!" class="light-blue-text text-accent-4">English</a></li>
+					</ul>
+					<ul class="side-nav" id="mobile-demo">
+						<li><a class="sidenav-link" href="#!" onclick="window.location.reload();"><i class="material-icons">refresh</i>Reload</a></li>
+						<li class="no-padding">
+							<ul class="collapsible collapsible-accordion">
+								<li>
+									<a class="collapsible-header">Theme<i class="material-icons">arrow_drop_down</i></a>
+									<div class="collapsible-body">
+										<ul>
+											<li><a href="#!" class="theme-links" data-theme="light">Light</a></li>
+											<li><a href="#!" class="theme-links" data-theme="dark">Dark</a></li>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</li>
+						<li class="no-padding">
+							<ul class="collapsible collapsible-accordion">
+								<li>
+									<a class="collapsible-header">Language<i class="material-icons">arrow_drop_down</i></a>
+									<div class="collapsible-body">
+										<ul>
+											<li><a href="#!" class="lang-links" data-lang="fr">Français</a></li>
+											<li><a href="#!" class="lang-links" data-lang="en">English</a></li>
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</div>
+	</header>
+	<main>
+		<div id="dyn-container" class="container">
+			<div class="hide-on-med-and-down">
+				<p class="flow-text">Welcome and thanks for using my tool.<br>To convert your report, just select an import method below.</p>
+				<p class="flow-text">Click on the button to redistribute the space. <small>(<a href="#!" onclick="$(this).parent().parent().css('display', 'none');">Dismiss</a>)</small><br><a href="#!" id="toggle-container" class="waves-effect waves-light btn light-blue accent-4 white-text">Enlarge</a></p>
+			</div>
+			<div class="hide-on-large-only">
+				<p class="flow-text">Welcome and thanks for using my tool.<br>To convert your report, just select an import method below.</p>
+			</div>
+			<fieldset>
+				<legend>Report Source</legend>
+				<div class="row" style="margin-bottom: 0;">
+					<div class="col s12">
+						<ul class="tabs tabs-fixed-width z-depth-1">
+							<li class="tab col s3"><a class="light-blue-text text-accent-4 active" href="#report-url">From URL</a></li>
+							<li class="tab col s3"><a class="light-blue-text text-accent-4" href="#report-upload">From Upload</a></li>
+							<li class="tab col s3"><a class="light-blue-text text-accent-4" href="#report-string">From String</a></li>
+						</ul>
+					</div>
+					<div id="report-url" class="col s12">
+						<form id="report-url-form" style="padding: 10px 5px 0px 5px;">
+							<div class="row">
+								<div class="input-field col s12 m9 l10">
+									<input type="url" id="report-url-field" placeholder="Enter URL here" class="validate">
+									<label for="report-url-field">By URL</label>
+									<a id="sample-report" href="#!">Load sample report</a>
+								</div>
+								<div class="input-field col s12 m3 l2 center-align">
+									<input type="submit" class="waves-effect waves-light btn light-blue accent-4 white-text" value="Send">
+								</div>
+							</div>
+						</form>
+					</div>
+					<div id="report-upload" class="col s12">
+						<form id="report-upload-form" style="padding: 10px 5px 0px 5px;">
+							<div class="row">
+								<div class="input-field col s12 m9 l10 file-field">
+									<div class="waves-effect waves-light btn light-blue accent-4 white-text">
+										<span>File</span>
+										<input type="file" id="report-upload-file" accept="text/xml">
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" id="report-upload-field" placeholder="Specify an XML file" class="file-path validate">
+									</div>
+									<a id="sample-report-file" href="#!">Load sample file</a>
+									<div id="report-upload-details" style="display: none; margin-top: 10px;">
+										Count: <span id="fileNum"></span> | Size: <span id="fileSize"></span>
+									</div>
+								</div>
+								<div class="input-field col s12 m3 l2 center-align">
+									<input type="submit" class="waves-effect waves-light btn light-blue accent-4 white-text" value="Parse">
+								</div>
+							</div>
+						</form>
+					</div>
+					<div id="report-string" class="col s12">
+						<form id="report-string-form" style="padding: 10px 5px 0px 5px;">
+							<div class="row">
+								<div class="input-field col s12 m9 l10">
+									<textarea id="report-string-field" class="materialize-textarea" placeholder="Paste XML string here" style="max-height: 300px;"></textarea>
+									<label for="report-string-field">By String</label>
+									<a id="sample-report-string" href="#!">Load sample string</a>
+								</div>
+								<div class="input-field col s12 m3 l2 center-align">
+									<input type="submit" class="waves-effect waves-light btn light-blue accent-4 white-text" value="Send">
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset id="report-fieldset" style="display: none;">
+				<legend>Converted Report</legend>
+				<div class="progress blue lighten-5" style="display: none;">
+					<div class="indeterminate light-blue"></div>
+				</div>
+				<div id="report-container"></div>
+			</fieldset>
+		</div>
+	</main>
+	<footer class="page-footer grey darken-4" style="margin-top: 2rem;">
+		<div class="container">
+			<div class="row">
+				<div class="col l6 s12">
+					<h5 class="white-text">ZAP Friendly Reports</h5>
+					<p class="grey-text text-lighten-4">Designed to ease the display and the understanding of your reports.</p>
+				</div>
+				<div class="col l2 offset-l2 s6">
+					<h5 class="white-text">Links</h5>
+					<ul>
+						<li>
+							<a class="grey-text text-lighten-3" href="https://www.owasp.org/index.php/Main_Page" target="_blank">
+								<img src="owasplogo.png" alt="logo" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">OWASP
+							</a>
+						</li>
+						<li>
+							<a class="grey-text text-lighten-3" href="https://www.zaproxy.org/" target="_blank">
+								<img src="zaplogo.png" alt="logo" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">ZAP
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div class="col l2 s6">
+					<h5 class="white-text">Project</h5>
+					<ul>
+						<li>
+							<a class="grey-text text-lighten-3" href="https://github.com/Jiab77/zap-friendly-report" target="_blank">
+								<i class="fab fa-github"></i>&nbsp;Github
+							</a>
+						</li>
+						<li>
+							<a class="grey-text text-lighten-3" href="https://github.com/Jiab77/zap-friendly-report/issues/new" target="_blank">
+								<i class="fas fa-bug"></i>&nbsp;Open an issue
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="footer-copyright">
+			<div class="container">
+				© 2019 &ndash; <a href="https://github.com/jiab77" target="_blank">Jonathan Barda</a>
+				<a class="grey-text text-lighten-4 right" href="https://gist.github.com/jiab77">
+					<i class="fab fa-github-alt"></i>&nbsp;My gists
+				</a>
+			</div>
+		</div>
 	</footer>
-    <script type="text/javascript" id="jquery-js" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-	<script type="text/javascript" id="he-js" src="https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.min.js"></script>
+	<script type="text/javascript" id="jquery-js" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 	<script type="text/javascript" id="materialize-js" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 	<script type="text/javascript" id="xml2js-js" src="https://cdnjs.cloudflare.com/ajax/libs/x2js/1.2.0/xml2json.min.js"></script>
 	<script type="text/javascript" id="echarts-js" src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
-	<script type="text/javascript" id="echarts-template-chalk-js" src="echarts.chalk.js"></script>
-	<script type="text/javascript" id="echarts-template-purple-passion-js" src="echarts.purple-passion.js"></script>
-	<script type="text/javascript" id="echarts-template-macarons-js" src="echarts.macarons.js"></script>
-	<script type="text/javascript" id="echarts-template-vintage-js" src="echarts.vintage.js"></script>
-	<script type="text/javascript" id="echarts-template-walden-js" src="echarts.walden.js"></script>
-	<script type="text/javascript" id="echarts-template-westeros-js" src="echarts.westeros.js"></script>
-	<script type="text/javascript" id="echarts-template-wonderland-js" src="echarts.wonderland.js"></script>
+	<script type="text/javascript" id="echarts-template-chalk-js" src="echarts/echarts.chalk.js"></script>
+	<script type="text/javascript" id="echarts-template-purple-passion-js" src="echarts/echarts.purple-passion.js"></script>
+	<script type="text/javascript" id="echarts-template-macarons-js" src="echarts/echarts.macarons.js"></script>
+	<script type="text/javascript" id="echarts-template-vintage-js" src="echarts/echarts.vintage.js"></script>
+	<script type="text/javascript" id="echarts-template-walden-js" src="echarts/echarts.walden.js"></script>
+	<script type="text/javascript" id="echarts-template-westeros-js" src="echarts/echarts.westeros.js"></script>
+	<script type="text/javascript" id="echarts-template-wonderland-js" src="echarts/echarts.wonderland.js"></script>
 	<script type="text/javascript" id="main-js" src="main.js"></script>
 </body>
 </html>
