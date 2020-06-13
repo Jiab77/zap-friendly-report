@@ -70,6 +70,7 @@ The people who helped me to make this project better and better.
 
 * [@Sevendogs5](https://twitter.com/Sevendogs5): Who provided me sample report data and brainstorming.
 * [@psiinon](https://twitter.com/psiinon): Who support me for this project.
+* [@javanrasokat](https://twitter.com/javanrasokat): For the new upcomming features.
 
 # Contact
 
