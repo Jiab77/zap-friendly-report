@@ -24,9 +24,9 @@ There is a `debug` mode which can be turned on. Just edit the file `main.js`:
 
 ```javascript
 $(function (event) {
-	// Config
-	var Settings = {
-		'debug': false,
+    // Config
+    var Settings = {
+        'debug': false,
 ```
 
 > Set the value to `true` to enable the `debug` mode.
