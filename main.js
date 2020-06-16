@@ -33,7 +33,7 @@ $(function (event) {
 			return sampleString;
 		})()
 	};
-	
+
 	// Materialize Components
 	var Framework = {
 		'body': $('body'),
@@ -231,7 +231,7 @@ $(function (event) {
 			Components.toggle.space.text('Enlarge');
 		}
 	});
-	
+
 	// Toggle theme
 	Components.toggle.theme.on('change', function (event) {
 		event.preventDefault();
@@ -278,19 +278,19 @@ $(function (event) {
 
 			case 'report-string-form':
 				var xmlString = Components.string.value;
-				
+
 				Report.resetAlerts();
 				Report.show();
 				Report.parseXml(xmlString, '#report-container');
 				break;
-				
+
 			case 'theme-selector-form':
 			case 'side-theme-selector-form':
 				if (Settings.debug === true) {
 					console.info('Changing user theme.');
 				}
 				break;
-		
+
 			default:
 				if (Settings.debug === true) {
 					console.error('Unsupported form Id.');
@@ -339,45 +339,45 @@ $(function (event) {
 		},
 		selectTheme: function (theme) {
 			if (!theme) { return false; }
-	
+
 			// Save defined report charts for later use
 			var charts = [];
 			charts.push(Report.charts.alerts, Report.charts.risks);
-	
+
 			// User want it dark!
 			if (theme === 'dark') {
 				if (Settings.debug === true) {
 					console.log('Switch to dark theme.');
 				}
-	
+
 				// Change body classes
 				Framework.body.removeClass('grey lighten-5 grey-text text-darken-3');
 				Framework.body.addClass('grey darken-1 grey-text text-darken-4');
-	
+
 				// Available 'dark' chart themes:
 				// - dark
 				// - chalk
 				// - purple-passion
-	
+
 				// Change charts theme
 				Report.charts.theme = 'chalk';
-	
+
 				// Do we have some saved data?
 				if (Report.saved) {
 					Report.initCharts(Report.saved);
 				}
 			}
-	
+
 			// Well now he want's it light...
 			else {
 				if (Settings.debug === true) {
 					console.log('Switch to light theme.');
 				}
-	
+
 				// Change body classes
 				Framework.body.removeClass('grey darken-1 grey-text text-darken-4');
 				Framework.body.addClass('grey lighten-5 grey-text text-darken-3');
-	
+
 				// Available 'light' chart themes:
 				// - light
 				// - vintage
@@ -385,16 +385,16 @@ $(function (event) {
 				// - wonderland
 				// - macarons
 				// - walden
-	
+
 				// Change charts theme
 				Report.charts.theme = 'walden';
-	
+
 				// Do we have some saved data?
 				if (Report.saved) {
 					Report.initCharts(Report.saved);
 				}
 			}
-	
+
 			// Do we have some initilized charts?
 			if (charts) {
 				// No idea... so we have to search for...
@@ -407,7 +407,7 @@ $(function (event) {
 								console.log('Chart instance:', chartInstance);
 								console.log('Instance options:', chartInstance.getOption());
 							}
-		
+
 							// Applying some styling fixes based on the assigned chart theme
 							switch (Report.charts.theme) {
 								case 'light':
@@ -417,7 +417,7 @@ $(function (event) {
 										}
 									}); */
 									break;
-		
+
 								case 'dark':
 									/* chartInstance.setOption({
 										textStyle: {
@@ -425,7 +425,7 @@ $(function (event) {
 										}
 									}); */
 									break;
-							
+
 								default:
 									// Nothing to do
 									break;
@@ -434,7 +434,7 @@ $(function (event) {
 					}
 				});
 			}
-	
+
 			if (Settings.debug === true) {
 				console.log('Chart theme.', Report.charts.theme);
 			}
@@ -457,10 +457,10 @@ $(function (event) {
 					if (Settings.debug === true) {
 						console.info('Got XML Document:', response);
 					}
-	
+
 					var x2js = new X2JS();
 					var jsonObj = x2js.xml2json(response);
-	
+
 					if (typeof jsonObj === 'object') {
 						if (Settings.debug === true) {
 							console.info('Got JSON Object:', jsonObj);
@@ -565,7 +565,7 @@ $(function (event) {
 			var nBytes = 0,
 				oFiles = document.getElementById('report-upload-file').files,
 				nFiles = oFiles.length;
-			
+
 			for (var nFileId = 0; nFileId < nFiles; nFileId++) {
 				nBytes += oFiles[nFileId].size;
 			}
@@ -582,6 +582,7 @@ $(function (event) {
 		resetAlerts: function () {
 			delete Report.alerts;
 			Report.alerts = {
+				'informational': 0,
 				'low': 0,
 				'medium': 0,
 				'high': 0
@@ -595,6 +596,7 @@ $(function (event) {
 				if (Array.isArray(alerts)) {
 					alerts.forEach(function (value, index) {
 						switch (value.riskcode) {
+							case '0': Report.alerts.informational++; break;
 							case '1': Report.alerts.low++; break;
 							case '2': Report.alerts.medium++; break;
 							case '3': Report.alerts.high++; break;
@@ -603,6 +605,7 @@ $(function (event) {
 				}
 				else {
 					switch (alerts.riskcode) {
+						case '0': Report.alerts.informational++; break;
 						case '1': Report.alerts.low++; break;
 						case '2': Report.alerts.medium++; break;
 						case '3': Report.alerts.high++; break;
@@ -667,7 +670,7 @@ $(function (event) {
 		},
 		buildBarChart: function (data, container, date) {
 			var chart, option;
-			
+
 			if (container) {
 				// delete any existing instance (theme refresh workaround...)
 				if (Settings.debug === true) {
@@ -727,7 +730,7 @@ $(function (event) {
 						}
 					]
 				};
-				
+
 				// use configuration item and data specified to show chart
 				chart.setOption(option);
 			}
@@ -739,7 +742,7 @@ $(function (event) {
 		},
 		buildPieChart: function (data, container, date) {
 			var chart, option;
-			
+
 			if (container) {
 				// delete any existing instance (theme refresh workaround...)
 				if (Settings.debug === true) {
@@ -795,7 +798,7 @@ $(function (event) {
 						}
 					]
 				};
-				
+
 				// use configuration item and data specified to show chart
 				chart.setOption(option);
 			}
@@ -926,14 +929,15 @@ $(function (event) {
 				html += '<li>';
 				html += '<div class="collapsible-header">';
 				html += '<i class="material-icons">view_module</i>Alert Items';
-				
+
 				// Init internal alerts counters
 				Report.summarizeAlerts(convertedReport.site.alerts.alertitem);
 
 				html += '<span style="float: right; margin-left: auto;">';
 				html += '<span class="new badge deep-orange accent-3" style="margin-left: 5px;" data-badge-caption="High ' + Report.alerts.high + '"></span>';
 				html += '<span class="new badge amber lighten-1" style="margin-left: 5px;" data-badge-caption="Medium ' + Report.alerts.medium + '"></span>';
-				html += '<span class="new badge light-blue" data-badge-caption="Low ' + Report.alerts.low + '"></span>';
+				html += '<span class="new badge light-blue" style="margin-left: 5px;" data-badge-caption="Low ' + Report.alerts.low + '"></span>';
+				html += '<span class="new badge light-blue" data-badge-caption="Informational ' + Report.alerts.informational + '"></span>';
 				html += '</span>';
 
 				html += '</div>';
@@ -947,7 +951,7 @@ $(function (event) {
 						if (Settings.debug === true) {
 							console.log(index, value);
 						}
-	
+
 						html += '<li>';
 						html += '<div class="collapsible-header">';
 						html += '<i class="material-icons">info</i>';
@@ -956,6 +960,9 @@ $(function (event) {
 							html += '&nbsp;&ndash;&nbsp;<a href="' + value.uri + '" target="_blank">Open in browser</a>';
 						}
 						switch (value.riskcode) {
+							case '0':
+								html += '<span class="new badge light-blue" data-badge-caption="Informational"></span>';
+								break;
 							case '1':
 								html += '<span class="new badge light-blue" data-badge-caption="Risk&nbsp;' + value.riskcode + '&nbsp;&ndash;&nbsp;Low"></span>';
 								break;
@@ -999,17 +1006,17 @@ $(function (event) {
 							var regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/igm;
 							var matches = 0;
 							var m;
-	
+
 							html += '<span style="text-decoration: underline;">Reference(s):</span><br>';
 							while ((m = regex.exec(value.reference)) !== null) {
 								// Increment matches counter
 								matches++;
-	
+
 								// This is necessary to avoid infinite loops with zero-width matches
 								if (m.index === regex.lastIndex) {
 									regex.lastIndex++;
 								}
-								
+
 								// The result can be accessed through the `m`-variable.
 								m.forEach(function (match, groupIndex) {
 									if (Settings.debug === true) {
@@ -1044,6 +1051,9 @@ $(function (event) {
 						html += '&nbsp;&ndash;&nbsp;<a href="' + convertedReport.site.alerts.alertitem.uri + '" target="_blank">Open in browser</a>';
 					}
 					switch (convertedReport.site.alerts.alertitem.riskcode) {
+						case '0':
+							html += '<span class="new badge light-blue" data-badge-caption="Informational"></span>';
+							break;
 						case '1':
 							html += '<span class="new badge light-blue" data-badge-caption="Risk&nbsp;' + convertedReport.site.alerts.alertitem.riskcode + '&nbsp;&ndash;&nbsp;Low"></span>';
 							break;
@@ -1097,7 +1107,7 @@ $(function (event) {
 							if (m.index === regex.lastIndex) {
 								regex.lastIndex++;
 							}
-							
+
 							// The result can be accessed through the `m`-variable.
 							m.forEach(function (match, groupIndex) {
 								if (Settings.debug === true) {
@@ -1122,7 +1132,7 @@ $(function (event) {
 					html += '</div>';
 					html += '</li>';
 				}
-				
+
 				html += '</ul>';
 
 				// End - Alerts - Items
