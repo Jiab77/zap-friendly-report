@@ -4,7 +4,7 @@
 $(function (event) {
 	// Config
 	var Settings = {
-		'debug': false,
+		'debug': true,
 		'dialogTimeout': 4000,
 		'sampleURL': 'https://raw.githubusercontent.com/zaproxy/zaproxy/develop/examples/ZAP_2.4.3_report-unmerged.xml',
 		'sampleFile': './sample-resources/ZAP_2.4.3_report-unmerged.xml',
@@ -326,7 +326,8 @@ $(function (event) {
 			// - macarons
 			// - walden
 
-			theme: 'walden'
+			theme: 'walden',
+			themeCategory: 'light'
 		},
 		url: '',
 		createDialog: function (message) {
@@ -361,11 +362,10 @@ $(function (event) {
 
 				// Change charts theme
 				Report.charts.theme = 'chalk';
+				Report.charts.themeCategory = theme;
 
-				// Do we have some saved data?
-				if (Report.saved) {
-					Report.initCharts(Report.saved);
-				}
+				// Reload charts
+				Report.initCharts();
 			}
 
 			// Well now he want's it light...
@@ -388,11 +388,10 @@ $(function (event) {
 
 				// Change charts theme
 				Report.charts.theme = 'walden';
+				Report.charts.themeCategory = theme;
 
-				// Do we have some saved data?
-				if (Report.saved) {
-					Report.initCharts(Report.saved);
-				}
+				// Reload charts
+				Report.initCharts();
 			}
 
 			// Do we have some initilized charts?
@@ -427,7 +426,7 @@ $(function (event) {
 									break;
 
 								default:
-									// Nothing to do
+									// Nothing to do for other themes
 									break;
 							}
 						}
@@ -436,7 +435,7 @@ $(function (event) {
 			}
 
 			if (Settings.debug === true) {
-				console.log('Chart theme.', Report.charts.theme);
+				console.log('Chart theme:', Report.charts.theme);
 			}
 		},
 		fetch: function (url, container) {
@@ -589,27 +588,31 @@ $(function (event) {
 			}
 		},
 		summarizeAlerts: function (alerts) {
+			// Reset internal counters
+			Report.resetAlerts();
+
+			// Internal counting function
+			function countAlerts(code) {
+				switch (code) {
+					case '0': Report.alerts.informational++; break;
+					case '1': Report.alerts.low++; break;
+					case '2': Report.alerts.medium++; break;
+					case '3': Report.alerts.high++; break;
+				}
+			}
+
+			// Compute alerts
 			if (alerts) {
 				if (Settings.debug === true) {
-					console.info('Summarize alerts...');
+					console.info('Summarizing alerts...', alerts);
 				}
 				if (Array.isArray(alerts)) {
-					alerts.forEach(function (value, index) {
-						switch (value.riskcode) {
-							case '0': Report.alerts.informational++; break;
-							case '1': Report.alerts.low++; break;
-							case '2': Report.alerts.medium++; break;
-							case '3': Report.alerts.high++; break;
-						}
+					alerts.forEach(function (alert, index) {
+						countAlerts(alert.riskcode);
 					});
 				}
 				else {
-					switch (alerts.riskcode) {
-						case '0': Report.alerts.informational++; break;
-						case '1': Report.alerts.low++; break;
-						case '2': Report.alerts.medium++; break;
-						case '3': Report.alerts.high++; break;
-					}
+					countAlerts(alerts.riskcode);
 				}
 			}
 			else {
@@ -619,7 +622,7 @@ $(function (event) {
 		summarizeRisks: function (risks) {
 			if (risks) {
 				if (Settings.debug === true) {
-					console.info('Summarize risks...');
+					console.info('Summarizing risks...', risks);
 				}
 				// Took the idea from: https://stackoverflow.com/a/29957627
 				// I'm not a genius... Just a good researcher...
@@ -646,21 +649,26 @@ $(function (event) {
 			if (alerts) {
 				if (summarizedData) {
 					if (Settings.debug === true) {
-						console.info('Building chart data...');
+						console.info('Building chart data...', summarizedData);
 					}
-					Object.keys(summarizedData).forEach(function (value, index) {
-						var match = false, code;
-						for (var i = 0; i < alerts.length; i++) {
-							if (alerts[i].alert === value) {
-								match = true;
-								code = alerts[i].riskcode;
-								break;
+					if (Object.keys(summarizedData).length > 1) {
+						Object.keys(summarizedData).forEach(function (value, index) {
+							var match = false, code;
+							for (var i = 0; i < alerts.length; i++) {
+								if (alerts[i].alert === value) {
+									match = true;
+									code = alerts[i].riskcode;
+									break;
+								}
 							}
-						}
-						if (match === true) {
-							data.push([code, summarizedData[value], value]);
-						}
-					});
+							if (match === true) {
+								data.push([code, summarizedData[value], value]);
+							}
+						});
+					}
+					else {
+						data.push([Object.values(summarizedData)[0], 1, Object.keys(summarizedData)[0]]);
+					}
 					return data;
 				}
 			}
@@ -674,7 +682,7 @@ $(function (event) {
 			if (container) {
 				// delete any existing instance (theme refresh workaround...)
 				if (Settings.debug === true) {
-					console.log('Building "Bar" chart.');
+					console.log('Building "Bar" chart.', data);
 					console.log('Delete existing instance.');
 				}
 				echarts.dispose(document.getElementById(container));
@@ -709,7 +717,7 @@ $(function (event) {
 					visualMap: {
 						orient: 'horizontal',
 						left: 'center',
-						min: 1,
+						min: 0,
 						max: 3,
 						text: ['High Score', 'Low Score'],
 						// Map the score column to color
@@ -746,7 +754,7 @@ $(function (event) {
 			if (container) {
 				// delete any existing instance (theme refresh workaround...)
 				if (Settings.debug === true) {
-					console.log('Building "Pie" chart.');
+					console.log('Building "Pie" chart.', data);
 					console.log('Delete existing instance.');
 				}
 				echarts.dispose(document.getElementById(container));
@@ -772,7 +780,7 @@ $(function (event) {
 					legend: {
 						orient: 'vertical',
 						left: 'left',
-						data: ['Low','Medium','High'],
+						data: ['Informational','Low','Medium','High'],
 						textStyle: {
 							color: 'rgba(255, 255, 255, 0.3)'
 						}
@@ -784,6 +792,7 @@ $(function (event) {
 							radius : '55%',
 							center: ['50%', '60%'],
 							data:[
+								{value:data.informational, name:'Informational'},
 								{value:data.low, name:'Low'},
 								{value:data.medium, name:'Medium'},
 								{value:data.high, name:'High'}
@@ -822,28 +831,47 @@ $(function (event) {
 			echarts.dispose(document.getElementById(Report.charts.risks));
 
 			// Delete existing chart data
-			delete Report.saved;
+			delete window.savedReport;
 		},
-		initCharts: function (report) {
-			// Save given report for later use
-			if (!Report.saved) {
-				Report.saved = report;
+		initCharts: function () {
+			if (!window.savedReport) {
+				console.warn('No saved report! Unable to initialize charts.');
 			}
 
-			// Create charts
-			Report.buildPieChart(
-				Report.alerts,
-				'chart-alerts',
-				report._generated
-			);
-			Report.buildBarChart(
-				Report.buildChartData(
-					report.site.alerts.alertitem,
-					Report.summarizeRisks(report.site.alerts.alertitem)
-				),
-				'chart-risks',
-				report._generated
-			);
+			var convertedReport = window.savedReport;
+
+			if (typeof convertedReport !== 'undefined') {
+				if (Array.isArray(convertedReport.site)) {
+					// Create charts for each sites
+					console.info('Found sites:', convertedReport.site.length);
+					for (let index = 0; index < convertedReport.site.length; index++) {
+						const site = convertedReport.site[index];
+						console.log('Building chart data for site:', index);
+						Report.summarizeAlerts(site.alerts.alertitem);
+						Report.buildPieChart(Report.alerts, 'chart-alerts-' + index, convertedReport._generated);
+						Report.buildBarChart(
+							Report.buildChartData(
+								site.alerts.alertitem,
+								Report.summarizeRisks(site.alerts.alertitem)
+							),
+							'chart-risks-' + index,
+							convertedReport._generated
+						);
+					}
+				} else {
+					console.log('Building chart data for site:', 0);
+					Report.summarizeAlerts(convertedReport.site.alerts.alertitem);
+					Report.buildPieChart(Report.alerts, 'chart-alerts', convertedReport._generated);
+					Report.buildBarChart(
+						Report.buildChartData(
+							convertedReport.site.alerts.alertitem,
+							Report.summarizeRisks(convertedReport.site.alerts.alertitem)
+						),
+						'chart-risks',
+						convertedReport._generated
+					);
+				}
+			}
 		},
 		build: function (obj, container) {
 			var html;
@@ -875,23 +903,34 @@ $(function (event) {
 				// Save converted report for later use
 				var convertedReport = obj.OWASPZAPReport;
 
+				// Save converted report to global context
+				window.savedReport = convertedReport;
+
 				// Main Container
 				html  = '<ul class="collapsible" data-collapsible="accordion">';
-				html += '<li>';
-				html += '<div class="collapsible-header">';
-				html += '<i class="material-icons">filter_drama</i>';
-				html += 'Generated:&nbsp;' + convertedReport._generated + '&nbsp;&ndash;&nbsp;Version:&nbsp;' + convertedReport._version;
-				html += '</div>';
-				html += '<div class="collapsible-body">';
 
 				if (Array.isArray(convertedReport.site)) {
-					// Report Table for each site
-					convertedReport.site.forEach(createReportTable)
+					// Create report table for each sites
+					console.info('Found sites:', convertedReport.site.length);
+					for (let index = 0; index < convertedReport.site.length; index++) {
+						const site = convertedReport.site[index];
+						console.log('Analysing site:', index);
+						createReportTable(site, index);
+					}
 				} else {
 					createReportTable(convertedReport.site);
 				}
 
-				function createReportTable(site) {
+				function createReportTable(site, id) {
+					// Collapsible - start
+					html += '<li>';
+					html += '<div class="collapsible-header">';
+					html += '<i class="material-icons">filter_drama</i>';
+					html += 'Generated:&nbsp;' + convertedReport._generated + '&nbsp;&ndash;&nbsp;Version:&nbsp;' + convertedReport._version;
+					html += '&nbsp;&ndash;&nbsp;' + site._host;
+					html += '</div>';
+					html += '<div class="collapsible-body">';
+
 					// Report Table
 					html += '<table>';
 					html += '<thead>';
@@ -922,13 +961,51 @@ $(function (event) {
 					html += '<div class="collapsible-header">';
 					html += '<i class="material-icons">assessment</i>Alert Graphs';
 					html += '<span style="float: right; margin-left: auto;">';
-					html += '<i id="collapsible-state" class="material-icons">arrow_drop_down</i>';
+					html += '<i id="collapsible-state' + (typeof id !== 'undefined' ? '-' + id : '') + '" class="material-icons">arrow_drop_down</i>';
 					html += '</span>';
 					html += '</div>';
 					html += '<div class="collapsible-body">';
+
+					// Charts theme selector
+					// TODO: Make the content dynamic
 					html += '<div class="row">';
-					html += '<div id="chart-alerts" class="col s12" style="width: 98%; height: 400px;"></div>';
-					html += '<div id="chart-risks" class="col s12" style="width: 98%; height: 400px;"></div>';
+					html += '<div class="col s12">';
+					html += '<a class="btn dropdown-button" href="#!" data-activates="dropdown1">Chart theme</a>';
+					html += '<ul id="dropdown1" class="dropdown-content">';
+					if (Report.charts.themeCategory === 'light') {
+						// Available 'light' chart themes:
+						// - light
+						// - vintage
+						// - westeros
+						// - wonderland
+						// - macarons
+						// - walden
+
+						html += '<li><a href="#!">light</a></li>';
+						html += '<li><a href="#!">vintage</a></li>';
+						html += '<li><a href="#!">westeros</a></li>';
+						html += '<li><a href="#!">wonderland</a></li>';
+						html += '<li><a href="#!">macarons</a></li>';
+						html += '<li><a href="#!">walden</a></li>';
+					}
+					else {
+						// Available 'dark' chart themes:
+						// - dark
+						// - chalk
+						// - purple-passion
+
+						html += '<li><a href="#!">dark</a></li>';
+						html += '<li><a href="#!">chalk</a></li>';
+						html += '<li><a href="#!">purple-passion</a></li>';
+					}
+					html += '</ul>';
+					html += '</div>';
+					html += '</div>';
+
+					// Charts container
+					html += '<div class="row">';
+					html += '<div id="chart-alerts' + (typeof id !== 'undefined' ? '-' + id : '') + '" class="col s12" style="width: 98%; height: 400px;"></div>';
+					html += '<div id="chart-risks' + (typeof id !== 'undefined' ? '-' + id : '') + '" class="col s12" style="width: 98%; height: 400px;"></div>';
 					html += '</div>';
 					html += '</div>';
 					html += '</li>';
@@ -941,10 +1018,11 @@ $(function (event) {
 					// Init internal alerts counters
 					Report.summarizeAlerts(site.alerts.alertitem);
 
+					// The writing order is reversed compared to the display order
 					html += '<span style="float: right; margin-left: auto;">';
 					html += '<span class="new badge deep-orange accent-3" style="margin-left: 5px;" data-badge-caption="High ' + Report.alerts.high + '"></span>';
-					html += '<span class="new badge amber lighten-1" style="margin-left: 5px;" data-badge-caption="Medium ' + Report.alerts.medium + '"></span>';
-					html += '<span class="new badge light-blue" style="margin-left: 5px;" data-badge-caption="Low ' + Report.alerts.low + '"></span>';
+					html += '<span class="new badge orange darken-1" style="margin-left: 5px;" data-badge-caption="Medium ' + Report.alerts.medium + '"></span>';
+					html += '<span class="new badge yellow grey-text text-lighten-1" style="margin-left: 5px;" data-badge-caption="Low ' + Report.alerts.low + '"></span>';
 					html += '<span class="new badge light-blue" data-badge-caption="Informational ' + Report.alerts.informational + '"></span>';
 					html += '</span>';
 
@@ -955,60 +1033,60 @@ $(function (event) {
 					html += '<ul class="collapsible" data-collapsible="accordion">';
 
 					if (Array.isArray(site.alerts.alertitem)) {
-						site.alerts.alertitem.forEach(function (value, index) {
-							if (Settings.debug === true) {
-								console.log(index, value);
-							}
+						site.alerts.alertitem.forEach(function (item, index) {
+							/* if (Settings.debug === true) {
+								console.log(index, item);
+							} */
 
 							html += '<li>';
 							html += '<div class="collapsible-header">';
 							html += '<i class="material-icons">info</i>';
-							html += 'Alert&nbsp;' + (index+1) + '&nbsp;&ndash;&nbsp;' + value.alert;
-							if (typeof value.uri !== 'undefined') {
-								html += '&nbsp;&ndash;&nbsp;<a href="' + value.uri + '" target="_blank">Open in browser</a>';
+							html += 'Alert&nbsp;' + (index+1) + '&nbsp;&ndash;&nbsp;' + item.alert;
+							if (typeof item.uri !== 'undefined') {
+								html += '&nbsp;&ndash;&nbsp;<a href="' + item.uri + '" target="_blank">Open in browser</a>';
 							}
-							switch (value.riskcode) {
+							switch (item.riskcode) {
 								case '0':
-									html += '<span class="new badge light-blue" data-badge-caption="Informational"></span>';
+									html += '<span class="new badge light-blue" data-badge-caption="Risk&nbsp;' + item.riskcode + '&nbsp;&ndash;&nbsp;Informational"></span>';
 									break;
 								case '1':
-									html += '<span class="new badge light-blue" data-badge-caption="Risk&nbsp;' + value.riskcode + '&nbsp;&ndash;&nbsp;Low"></span>';
+									html += '<span class="new badge yellow grey-text text-lighten-1" data-badge-caption="Risk&nbsp;' + item.riskcode + '&nbsp;&ndash;&nbsp;Low"></span>';
 									break;
 								case '2':
-									html += '<span class="new badge amber lighten-1" data-badge-caption="Risk&nbsp;' + value.riskcode + '&nbsp;&ndash;&nbsp;Medium"></span>';
+									html += '<span class="new badge orange darken-1" data-badge-caption="Risk&nbsp;' + item.riskcode + '&nbsp;&ndash;&nbsp;Medium"></span>';
 									break;
 								case '3':
-									html += '<span class="new badge deep-orange accent-3" data-badge-caption="Risk&nbsp;' + value.riskcode + '&nbsp;&ndash;&nbsp;High"></span>';
+									html += '<span class="new badge deep-orange accent-3" data-badge-caption="Risk&nbsp;' + item.riskcode + '&nbsp;&ndash;&nbsp;High"></span>';
 									break;
 							}
 							html += '</div>';
 							html += '<div class="collapsible-body">';
-							if (typeof value.attack !== 'undefined') {
+							if (typeof item.attack !== 'undefined') {
 								html += '<span style="text-decoration: underline;">Attack Type:</span><br>';
-								html += '<p><code><pre>' + Report.escapeHtml(value.attack) + '</pre></code></p>';
+								html += '<p><code><pre>' + Report.escapeHtml(item.attack) + '</pre></code></p>';
 							}
-							if (typeof value.desc !== 'undefined') {
+							if (typeof item.desc !== 'undefined') {
 								html += '<span style="text-decoration: underline;">Description:</span><br>';
-								html += value.desc;
+								html += item.desc;
 							}
-							if (typeof value.otherinfo !== 'undefined') {
+							if (typeof item.otherinfo !== 'undefined') {
 								html += '<blockquote>';
-								html += '<p>' + value.otherinfo + '</p>';
+								html += '<p>' + item.otherinfo + '</p>';
 								html += '</blockquote>';
 							}
-							if (typeof value.param !== 'undefined') {
+							if (typeof item.param !== 'undefined') {
 								html += '<span style="text-decoration: underline;">Parameter:</span><br>';
-								html += '<p><code><pre>' + value.param + '</pre></code></p>';
+								html += '<p><code><pre>' + item.param + '</pre></code></p>';
 							}
-							if (typeof value.solution !== 'undefined') {
+							if (typeof item.solution !== 'undefined') {
 								html += '<span style="text-decoration: underline;">Solution:</span><br>';
-								html += value.solution;
+								html += item.solution;
 							}
-							if (typeof value.evidence !== 'undefined') {
+							if (typeof item.evidence !== 'undefined') {
 								html += '<span style="text-decoration: underline;">Evidence(s):</span><br>';
-								html += '<p><code><pre>' + Report.escapeHtml(value.evidence) + '</pre></code></p>';
+								html += '<p><code><pre>' + Report.escapeHtml(item.evidence) + '</pre></code></p>';
 							}
-							if (typeof value.reference !== 'undefined') {
+							if (typeof item.reference !== 'undefined') {
 								// Took from: https://stackoverflow.com/a/29288898
 								// Tested on: https://regex101.com/
 								var regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/igm;
@@ -1016,7 +1094,7 @@ $(function (event) {
 								var m;
 
 								html += '<span style="text-decoration: underline;">Reference(s):</span><br>';
-								while ((m = regex.exec(value.reference)) !== null) {
+								while ((m = regex.exec(item.reference)) !== null) {
 									// Increment matches counter
 									matches++;
 
@@ -1027,79 +1105,82 @@ $(function (event) {
 
 									// The result can be accessed through the `m`-variable.
 									m.forEach(function (match, groupIndex) {
-										if (Settings.debug === true) {
+										/* if (Settings.debug === true) {
 											console.log(`Found match, group ${groupIndex}: ${match}`);
-										}
+										} */
 										html += '<p><a href="' + match + '" target="_blank">' + match + '</a></p>';
 									});
 								}
 								if (matches === 0) {
-									html += value.reference;
+									html += item.reference;
 								}
 							}
-							if (typeof value.pluginid !== 'undefined') {
-								html += '<span style="text-decoration: underline;">Plugin:</span>&nbsp;' + value.pluginid + '<br>';
+							if (typeof item.pluginid !== 'undefined') {
+								html += '<span style="text-decoration: underline;">Plugin:</span>&nbsp;' + item.pluginid + '<br>';
 							}
-							if (typeof value.cweid !== 'undefined') {
-								html += '<span style="text-decoration: underline;">CWE ID:</span>&nbsp;<a href="https://cwe.mitre.org/data/definitions/' + value.cweid + '.html" target="_blank">' + value.cweid + '</a><br>';
+							if (typeof item.cweid !== 'undefined') {
+								html += '<span style="text-decoration: underline;">CWE ID:</span>&nbsp;<a href="https://cwe.mitre.org/data/definitions/' + item.cweid + '.html" target="_blank">' + item.cweid + '</a><br>';
 							}
-							if (typeof value.wascid !== 'undefined') {
-								html += '<span style="text-decoration: underline;">WASC ID:</span>&nbsp;<a href="https://cse.google.com/cse?cx=partner-pub-9396229490951644%3A4ygj091ckzs&ie=ISO-8859-1&q=%22WASC-' + value.wascid + '%22&sa=Search&siteurl=www.webappsec.org" target="_blank">' + value.wascid + '</a><br>';
+							if (typeof item.wascid !== 'undefined') {
+								html += '<span style="text-decoration: underline;">WASC ID:</span>&nbsp;<a href="https://cse.google.com/cse?cx=partner-pub-9396229490951644%3A4ygj091ckzs&ie=ISO-8859-1&q=%22WASC-' + item.wascid + '%22&sa=Search&siteurl=www.webappsec.org" target="_blank">' + item.wascid + '</a><br>';
 							}
 							html += '</div>';
 							html += '</li>';
 						});
 					}
 					else {
+						// Shortcut variable
+						var item = site.alerts.alertitem;
+
 						html += '<li>';
 						html += '<div class="collapsible-header">';
 						html += '<i class="material-icons">info</i>';
-						html += 'Alert&nbsp;1&nbsp;&ndash;&nbsp;' + site.alerts.alertitem.alert;
-						if (typeof site.alerts.alertitem.uri !== 'undefined') {
-							html += '&nbsp;&ndash;&nbsp;<a href="' + site.alerts.alertitem.uri + '" target="_blank">Open in browser</a>';
+						html += 'Alert&nbsp;1&nbsp;&ndash;&nbsp;' + item.alert;
+						if (typeof item.uri !== 'undefined') {
+							html += '&nbsp;&ndash;&nbsp;<a href="' + item.uri + '" target="_blank">Open in browser</a>';
 						}
-						switch (site.alerts.alertitem.riskcode) {
+						switch (item.riskcode) {
 							case '0':
-								html += '<span class="new badge light-blue" data-badge-caption="Informational"></span>';
+								html += '<span class="new badge light-blue" data-badge-caption="Risk&nbsp;' + item.riskcode + '&nbsp;&ndash;&nbsp;Informational"></span>';
 								break;
 							case '1':
-								html += '<span class="new badge light-blue" data-badge-caption="Risk&nbsp;' + site.alerts.alertitem.riskcode + '&nbsp;&ndash;&nbsp;Low"></span>';
+								html += '<span class="new badge yellow grey-text text-lighten-1" data-badge-caption="Risk&nbsp;' + item.riskcode + '&nbsp;&ndash;&nbsp;Low"></span>';
 								break;
 							case '2':
-								html += '<span class="new badge amber lighten-1" data-badge-caption="Risk&nbsp;' + site.alerts.alertitem.riskcode + '&nbsp;&ndash;&nbsp;Medium"></span>';
+								html += '<span class="new badge orange darken-1" data-badge-caption="Risk&nbsp;' + item.riskcode + '&nbsp;&ndash;&nbsp;Medium"></span>';
 								break;
 							case '3':
-								html += '<span class="new badge deep-orange accent-3" data-badge-caption="Risk&nbsp;' + site.alerts.alertitem.riskcode + '&nbsp;&ndash;&nbsp;High"></span>';
+								html += '<span class="new badge deep-orange accent-3" data-badge-caption="Risk&nbsp;' + item.riskcode + '&nbsp;&ndash;&nbsp;High"></span>';
 								break;
 						}
 						html += '</div>';
 						html += '<div class="collapsible-body">';
-						if (typeof site.alerts.alertitem.attack !== 'undefined') {
+						if (typeof item.attack !== 'undefined') {
 							html += '<span style="text-decoration: underline;">Attack Type:</span><br>';
-							html += '<p><code><pre>' + Report.escapeHtml(site.alerts.alertitem.attack) + '</pre></code></p>';
+							html += '<p><code><pre>' + Report.escapeHtml(item.attack) + '</pre></code></p>';
 						}
-						if (typeof site.alerts.alertitem.desc !== 'undefined') {
+						if (typeof item.desc !== 'undefined') {
 							html += '<span style="text-decoration: underline;">Description:</span><br>';
-							html += site.alerts.alertitem.desc;
+							html += item.desc;
 						}
-						if (typeof site.alerts.alertitem.otherinfo !== 'undefined') {
+						if (typeof item.otherinfo !== 'undefined') {
 							html += '<blockquote>';
-							html += '<p>' + site.alerts.alertitem.otherinfo + '</p>';
+							html += '<p>' + item.otherinfo + '</p>';
 							html += '</blockquote>';
 						}
-						if (typeof site.alerts.alertitem.param !== 'undefined') {
+						if (typeof item.param !== 'undefined') {
 							html += '<span style="text-decoration: underline;">Parameter:</span><br>';
-							html += '<p><code><pre>' + site.alerts.alertitem.param + '</pre></code></p>';
+							html += '<p><code><pre>' + item.param + '</pre></code></p>';
 						}
-						if (typeof site.alerts.alertitem.solution !== 'undefined') {
+						if (typeof item.solution !== 'undefined') {
 							html += '<span style="text-decoration: underline;">Solution:</span><br>';
-							html += site.alerts.alertitem.solution;
+							html += item.solution;
 						}
-						if (typeof site.alerts.alertitem.evidence !== 'undefined') {
+						if (typeof item.evidence !== 'undefined') {
 							html += '<span style="text-decoration: underline;">Evidence(s):</span><br>';
-							html += '<p><code><pre>' + Report.escapeHtml(site.alerts.alertitem.evidence) + '</pre></code></p>';
+							html += '<p><code><pre>' + Report.escapeHtml(item.evidence) + '</pre></code></p>';
 						}
-						if (typeof site.alerts.alertitem.reference !== 'undefined') {
+						if (typeof item.reference !== 'undefined') {
 							// Took from: https://stackoverflow.com/a/29288898
 							// Tested on: https://regex101.com/
 							var regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/igm;
@@ -1107,7 +1188,7 @@ $(function (event) {
 							var m;
 
 							html += '<span style="text-decoration: underline;">Reference(s):</span><br>';
-							while ((m = regex.exec(site.alerts.alertitem.reference)) !== null) {
+							while ((m = regex.exec(item.reference)) !== null) {
 								// Increment matches counter
 								matches++;
 
@@ -1118,30 +1199,30 @@ $(function (event) {
 
 								// The result can be accessed through the `m`-variable.
 								m.forEach(function (match, groupIndex) {
-									if (Settings.debug === true) {
+									/* if (Settings.debug === true) {
 										console.log(`Found match, group ${groupIndex}: ${match}`);
-									}
+									} */
 									html += '<p><a href="' + match + '" target="_blank">' + match + '</a></p>';
 								});
 							}
 							if (matches === 0) {
-								html += site.alerts.alertitem.reference;
+								html += item.reference;
 							}
 						}
-						if (typeof site.alerts.alertitem.pluginid !== 'undefined') {
-							html += '<span style="text-decoration: underline;">Plugin:</span>&nbsp;' + site.alerts.alertitem.pluginid + '<br>';
+						if (typeof item.pluginid !== 'undefined') {
+							html += '<span style="text-decoration: underline;">Plugin:</span>&nbsp;' + item.pluginid + '<br>';
 						}
-						if (typeof site.alerts.alertitem.cweid !== 'undefined') {
-							html += '<span style="text-decoration: underline;">CWE ID:</span>&nbsp;<a href="https://cwe.mitre.org/data/definitions/' + site.alerts.alertitem.cweid + '.html" target="_blank">' + site.alerts.alertitem.cweid + '</a><br>';
+						if (typeof item.cweid !== 'undefined') {
+							html += '<span style="text-decoration: underline;">CWE ID:</span>&nbsp;<a href="https://cwe.mitre.org/data/definitions/' + item.cweid + '.html" target="_blank">' + item.cweid + '</a><br>';
 						}
-						if (typeof site.alerts.alertitem.wascid !== 'undefined') {
-							html += '<span style="text-decoration: underline;">WASC ID:</span>&nbsp;<a href="https://cse.google.com/cse?cx=partner-pub-9396229490951644%3A4ygj091ckzs&ie=ISO-8859-1&q=%22WASC-' + site.alerts.alertitem.wascid + '%22&sa=Search&siteurl=www.webappsec.org" target="_blank">' + site.alerts.alertitem.wascid + '</a><br>';
+						if (typeof item.wascid !== 'undefined') {
+							html += '<span style="text-decoration: underline;">WASC ID:</span>&nbsp;<a href="https://cse.google.com/cse?cx=partner-pub-9396229490951644%3A4ygj091ckzs&ie=ISO-8859-1&q=%22WASC-' + item.wascid + '%22&sa=Search&siteurl=www.webappsec.org" target="_blank">' + item.wascid + '</a><br>';
 						}
+
 						html += '</div>';
 						html += '</li>';
+						html += '</ul>';
 					}
-
-					html += '</ul>';
 
 					// End - Alerts - Items
 					html += '</div>';
@@ -1150,6 +1231,8 @@ $(function (event) {
 
 					// End - Alerts - Container
 					html += '</div>';
+					
+					// End - Collapsible
 					html += '</li>';
 				}
 
@@ -1159,7 +1242,7 @@ $(function (event) {
 				// Assign HTML code to container
 				container.html(html);
 
-				// Assign method on newly created collapsibles
+				// Assign methods on newly created collapsibles
 				$('.collapsible').collapsible({
 					accordion: false, // A setting that changes the collapsible behavior to expandable instead of the default accordion style
 					onOpen: function(el) { // Callback for Collapsible open
@@ -1168,8 +1251,7 @@ $(function (event) {
 						}
 						if (el[0] && typeof el[0].id !== 'undefined' && el[0].id === 'graphs') {
 							$('#collapsible-state').text('arrow_drop_up');
-							// Create charts
-							Report.initCharts(convertedReport);
+							Report.initCharts(); // Create charts
 						}
 					},
 					onClose: function(el) { // Callback for Collapsible close
@@ -1182,9 +1264,17 @@ $(function (event) {
 					}
 				});
 
-				// Count similar alerts
-				// console.log('Alerts:', Report.summarizeRisks(site.alerts.alertitem));
-				// console.log('Chart data:', Report.buildChartData(site.alerts.alertitem, Report.summarizeRisks(site.alerts.alertitem)));
+				// Init newly created dropdowns
+				$('.dropdown-button').dropdown({
+					inDuration: 300,
+					outDuration: 225,
+					constrainWidth: true, // Does not change width of dropdown to that of the activator
+					hover: false, // Activate on hover
+					gutter: 0, // Spacing from edge
+					belowOrigin: true, // Displays dropdown below the button
+					alignment: 'left', // Displays dropdown with edge aligned to the left of button
+					stopPropagation: false // Stops event propagation
+				});
 			}
 		},
 		check: function () {
@@ -1202,7 +1292,6 @@ $(function (event) {
 			if (Settings.debug === true) {
 				Report.getStructure();
 			}
-			Report.resetAlerts();
 			Report.show();
 			Report.url = Settings.sampleURL;
 			Components.url.val(Report.url);
@@ -1214,7 +1303,6 @@ $(function (event) {
 				Report.getStructure();
 			}
 			if (Report.check() === true) {
-				Report.resetAlerts();
 				Report.show();
 				Report.url = Settings.sampleFile;
 				Components.file.val(Report.url);
@@ -1229,7 +1317,6 @@ $(function (event) {
 			if (Settings.debug === true) {
 				Report.getStructure();
 			}
-			Report.resetAlerts();
 			Report.show();
 			Components.string.val(Settings.sampleString);
 			Report.parseXml(Settings.sampleString, '#report-container');
@@ -1242,6 +1329,12 @@ $(function (event) {
 	// Display state of the main oject
 	if (Settings.debug === true) {
 		Report.getStructure();
+	}
+
+	// Exporting Report object to global context for better debugging
+	if (Settings.debug === true) {
+		console.log('Exporting Report object to global context...');
+		window.Report = Report;
 	}
 
 	if (Settings.debug === true) {
