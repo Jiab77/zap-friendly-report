@@ -305,6 +305,7 @@ $(function (event) {
 	// Using jquery to be quick as it's already needed by Materializecss
 	var Report = {
 		alerts: {
+			'informational': 0,
 			'low': 0,
 			'medium': 0,
 			'high': 0
