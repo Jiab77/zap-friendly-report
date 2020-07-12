@@ -18,6 +18,7 @@ TODO:
 - [X] Fix `dark` theme
 - [X] Fix charts `style` issues
 - [X] Fix `dark` theme not applied when the report is loaded after theme selection
+- [ ] Display found evidences
 
 What's missing:
 
