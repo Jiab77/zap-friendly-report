@@ -1,5 +1,11 @@
 "use strict";
 
+// Minor String prototype patch
+// From: https://stackoverflow.com/a/3291856
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
 // Boot stuff when DOM is loaded
 $(function (event) {
 	// Config
@@ -70,7 +76,7 @@ $(function (event) {
 			'theme': $('#theme-selector')
 		},
 		'container': $('#dyn-container'),
-		'report': $('#report-fieldset'),
+		'report': $('#report-data'),
 		'string': $('#report-string-field'),
 		'file': $('#report-upload-field'),
 		'upload': $('#report-upload-file'),
@@ -313,22 +319,31 @@ $(function (event) {
 		charts: {
 			alerts: 'chart-alerts',
 			risks: 'chart-risks',
+			themes: [
+				// Available 'dark' chart themes:
+				// - dark
+				// - chalk
+				// - purple-passion
+				{name: 'dark', category: 'dark'},
+				{name: 'chalk', category: 'dark', default: true},
+				{name: 'purple-passion', category: 'dark'},
 
-			// Available 'dark' chart themes:
-			// - dark
-			// - chalk
-			// - purple-passion
-
-			// Available 'light' chart themes:
-			// - light
-			// - vintage
-			// - westeros
-			// - wonderland
-			// - macarons
-			// - walden
-
-			theme: 'walden',
-			themeCategory: 'light'
+				// Available 'light' chart themes:
+				// - light
+				// - vintage
+				// - westeros
+				// - wonderland
+				// - macarons
+				// - walden
+				{name: 'light', category: 'light'},
+				{name: 'vintage', category: 'light'},
+				{name: 'westeros', category: 'light'},
+				{name: 'wonderland', category: 'light'},
+				{name: 'macarons', category: 'light'},
+				{name: 'walden', category: 'light', default: true},
+			],
+			theme: 'walden', // Set default chart them
+			themeCategory: 'light' // Set default chart them category
 		},
 		url: '',
 		createDialog: function (message) {
@@ -354,46 +369,56 @@ $(function (event) {
 
 				// Change body classes
 				Framework.body.removeClass('grey lighten-5 grey-text text-darken-3');
-				Framework.body.addClass('grey darken-1 grey-text text-darken-4');
+				// Framework.body.addClass('grey darken-1 grey-text text-darken-4');
+				Framework.body.addClass('grey darken-2 white-text');
 
-				// Available 'dark' chart themes:
-				// - dark
-				// - chalk
-				// - purple-passion
+				// Change report source fieldset classes
+				$('#report-source').addClass('grey darken-3');
 
-				// Change charts theme
-				Report.charts.theme = 'chalk';
-				Report.charts.themeCategory = theme;
-
-				// Reload charts
-				Report.initCharts();
+				// Change generated collapsibles classes
+				$('.collapsible').each(function () {
+					$(this).addClass('grey darken-4 white-text');
+				});
+				$('.collapsible-header').each(function () {
+					$(this).addClass('grey darken-3 white-text');
+				});
 			}
 
-			// Well now he want's it light...
+			// User want it light... (booo! lol)
 			else {
 				if (Settings.debug === true) {
 					console.log('Switch to light theme.');
 				}
 
 				// Change body classes
-				Framework.body.removeClass('grey darken-1 grey-text text-darken-4');
+				// Framework.body.removeClass('grey darken-1 grey-text text-darken-4');
+				Framework.body.removeClass('grey darken-2 white-text');
 				Framework.body.addClass('grey lighten-5 grey-text text-darken-3');
 
-				// Available 'light' chart themes:
-				// - light
-				// - vintage
-				// - westeros
-				// - wonderland
-				// - macarons
-				// - walden
+				// Change report source fieldset classes
+				$('#report-source').removeClass('grey darken-3');
 
-				// Change charts theme
-				Report.charts.theme = 'walden';
-				Report.charts.themeCategory = theme;
-
-				// Reload charts
-				Report.initCharts();
+				// Change generated collapsibles classes
+				$('.collapsible').each(function () {
+					$(this).removeClass('grey darken-4 white-text');
+				});
+				$('.collapsible-header').each(function () {
+					$(this).removeClass('grey darken-3 white-text');
+				});
 			}
+
+			// Change charts theme
+			Report.charts.themes.forEach(function (value, index) {
+				if (value.category === theme) {
+					if (value.default && value.default === true) {
+						Report.charts.theme = value.name;
+						Report.charts.themeCategory = theme;
+					}
+				}
+			});
+
+			// Reload charts
+			Report.initCharts();
 
 			// Do we have some initilized charts?
 			if (charts) {
@@ -429,6 +454,97 @@ $(function (event) {
 								default:
 									// Nothing to do for other themes
 									break;
+							}
+						}
+					}
+				});
+			}
+
+			if (Settings.debug === true) {
+				console.log('Chart theme:', Report.charts.theme);
+			}
+
+			// Redraw chart theme selector content
+			if (window.savedReport) {
+				if (Array.isArray(window.savedReport.site)) {
+					window.savedReport.site.forEach(function (site, index) {
+						var $chartThemeSelector = $('#chart-themes-dropdown-' + index);
+						var $chartThemeStatusText = $('#chart-theme-active-' + index);
+						var html = '';
+						$chartThemeSelector.html('');
+						$chartThemeStatusText.html('');
+						Report.charts.themes.forEach(function (value, index) {
+							if (value.category === theme) {
+								html += '<li id="theme-' + index + '"><a class="light-blue-text text-accent-4" onclick="Report.selectChartTheme(\'' + value.name + '\'); return false;">' + value.name + '</a></li>';
+							}
+						});
+						$chartThemeSelector.html(html);
+						$chartThemeStatusText.html(String(Report.charts.theme).capitalize());
+					});
+				}
+				else {
+					var $chartThemeSelector = $('#chart-themes-dropdown');
+					var $chartThemeStatusText = $('#chart-theme-active');
+					var html = '';
+					$chartThemeSelector.html('');
+					$chartThemeStatusText.html('');
+					Report.charts.themes.forEach(function (value, index) {
+						if (value.category === theme) {
+							html += '<li id="theme-' + index + '"><a class="light-blue-text text-accent-4" onclick="Report.selectChartTheme(\'' + value.name + '\'); return false;">' + value.name + '</a></li>';
+						}
+					});
+					$chartThemeSelector.html(html);
+					$chartThemeStatusText.html(String(Report.charts.theme).capitalize());
+				}
+			}
+		},
+		selectChartTheme: function (theme) {
+			if (!theme) { return false; }
+
+			// Save defined report charts for later use
+			var charts = [];
+			charts.push(Report.charts.alerts, Report.charts.risks);
+
+			// Change charts theme
+			Report.charts.themes.forEach(function (value, index) {
+				if (value.name === theme) {
+					Report.charts.theme = value.name;
+					Report.charts.themeCategory = value.category;
+				}
+			});
+
+			// Show active theme on charts
+			if (window.savedReport) {
+				if (Array.isArray(window.savedReport.site)) {
+					window.savedReport.site.forEach(function (site, index) {
+						var $chartThemeStatusText = $('#chart-theme-active-' + index);
+
+						$chartThemeStatusText.html('');
+						$chartThemeStatusText.html(String(Report.charts.theme).capitalize());
+					});
+				}
+				else {
+					var $chartThemeStatusText = $('#chart-theme-active');
+
+					$chartThemeStatusText.html('');
+					$chartThemeStatusText.html(String(Report.charts.theme).capitalize());
+				}
+			}
+
+			// Reload charts
+			Report.initCharts();
+
+			// Do we have some initilized charts?
+			if (charts) {
+				// No idea... so we have to search for...
+				charts.forEach(function (value, index) {
+					if (document.getElementById(value) !== null) {
+						var chartInstance = echarts.getInstanceByDom(document.getElementById(value));
+						if (typeof chartInstance !== 'undefined') {
+							// Found some instances...
+							if (Settings.debug === true) {
+								console.log('Chart instance:', chartInstance);
+								console.log('Instance options:', chartInstance.getOption());
 							}
 						}
 					}
@@ -968,38 +1084,18 @@ $(function (event) {
 					html += '<div class="collapsible-body">';
 
 					// Charts theme selector
-					// TODO: Make the content dynamic
 					html += '<div class="row">';
 					html += '<div class="col s12">';
-					html += '<a class="btn dropdown-button" href="#!" data-activates="dropdown1">Chart theme</a>';
-					html += '<ul id="dropdown1" class="dropdown-content">';
-					if (Report.charts.themeCategory === 'light') {
-						// Available 'light' chart themes:
-						// - light
-						// - vintage
-						// - westeros
-						// - wonderland
-						// - macarons
-						// - walden
-
-						html += '<li><a href="#!">light</a></li>';
-						html += '<li><a href="#!">vintage</a></li>';
-						html += '<li><a href="#!">westeros</a></li>';
-						html += '<li><a href="#!">wonderland</a></li>';
-						html += '<li><a href="#!">macarons</a></li>';
-						html += '<li><a href="#!">walden</a></li>';
-					}
-					else {
-						// Available 'dark' chart themes:
-						// - dark
-						// - chalk
-						// - purple-passion
-
-						html += '<li><a href="#!">dark</a></li>';
-						html += '<li><a href="#!">chalk</a></li>';
-						html += '<li><a href="#!">purple-passion</a></li>';
-					}
+					html += '<a class="btn light-blue accent-4 white-text dropdown-button chart-themes-dropdown" href="#!" data-activates="chart-themes-dropdown' + (typeof id !== 'undefined' ? '-' + id : '') + '">Change theme</a>';
+					html += '<ul id="chart-themes-dropdown' + (typeof id !== 'undefined' ? '-' + id : '') + '" class="dropdown-content">';
+					Report.charts.themes.forEach(function (value, index) {
+						if (value.category === Report.charts.themeCategory) {
+							html += '<li id="theme-' + index + '"><a class="light-blue-text text-accent-4" onclick="Report.selectChartTheme(\'' + value.name + '\'); return false;">' + value.name + '</a></li>';
+						}
+					});
 					html += '</ul>';
+					html += '&nbsp;<span>Active theme:</span>';
+					html += '&nbsp;<span id="chart-theme-active' + (typeof id !== 'undefined' ? '-' + id : '') + '">' + String(Report.charts.theme).capitalize() + '</span>';
 					html += '</div>';
 					html += '</div>';
 
@@ -1266,7 +1362,7 @@ $(function (event) {
 				});
 
 				// Init newly created dropdowns
-				$('.dropdown-button').dropdown({
+				$('.chart-themes-dropdown').dropdown({
 					inDuration: 300,
 					outDuration: 225,
 					constrainWidth: true, // Does not change width of dropdown to that of the activator
