@@ -1024,7 +1024,7 @@ $(function (event) {
 				window.savedReport = convertedReport;
 
 				// Main Container
-				html  = '<ul class="collapsible" data-collapsible="accordion">';
+				html  = '<ul class="collapsible' + (Report.charts.themeCategory === 'dark' ? ' grey darken-4 white-text' : '') + '" data-collapsible="accordion">';
 
 				if (Array.isArray(convertedReport.site)) {
 					// Create report table for each sites
@@ -1041,7 +1041,7 @@ $(function (event) {
 				function createReportTable(site, id) {
 					// Collapsible - start
 					html += '<li>';
-					html += '<div class="collapsible-header">';
+					html += '<div class="collapsible-header' + (Report.charts.themeCategory === 'dark' ? ' grey darken-3 white-text' : '') + '">';
 					html += '<i class="material-icons">filter_drama</i>';
 					html += 'Generated:&nbsp;' + convertedReport._generated + '&nbsp;&ndash;&nbsp;Version:&nbsp;' + convertedReport._version;
 					html += '&nbsp;&ndash;&nbsp;' + site._host;
@@ -1071,11 +1071,11 @@ $(function (event) {
 					html += '</table>';
 
 					// Main - Container
-					html += '<ul class="collapsible" data-collapsible="accordion">';
+					html += '<ul class="collapsible' + (Report.charts.themeCategory === 'dark' ? ' grey darken-4 white-text' : '') + '" data-collapsible="accordion">';
 
 					// Graphs - Container
 					html += '<li id="graphs">';
-					html += '<div class="collapsible-header">';
+					html += '<div class="collapsible-header' + (Report.charts.themeCategory === 'dark' ? ' grey darken-3 white-text' : '') + '">';
 					html += '<i class="material-icons">assessment</i>Alert Graphs';
 					html += '<span style="float: right; margin-left: auto;">';
 					html += '<i id="collapsible-state' + (typeof id !== 'undefined' ? '-' + id : '') + '" class="material-icons">arrow_drop_down</i>';
@@ -1109,7 +1109,7 @@ $(function (event) {
 
 					// Alerts - Container
 					html += '<li>';
-					html += '<div class="collapsible-header">';
+					html += '<div class="collapsible-header' + (Report.charts.themeCategory === 'dark' ? ' grey darken-3 white-text' : '') + '">';
 					html += '<i class="material-icons">view_module</i>Alert Items';
 
 					// Init internal alerts counters
@@ -1127,7 +1127,7 @@ $(function (event) {
 					html += '<div class="collapsible-body">';
 
 					// Alerts - Items
-					html += '<ul class="collapsible" data-collapsible="accordion">';
+					html += '<ul class="collapsible' + (Report.charts.themeCategory === 'dark' ? ' grey darken-4 white-text' : '') + '" data-collapsible="accordion">';
 
 					if (Array.isArray(site.alerts.alertitem)) {
 						site.alerts.alertitem.forEach(function (item, index) {
@@ -1136,7 +1136,7 @@ $(function (event) {
 							} */
 
 							html += '<li>';
-							html += '<div class="collapsible-header">';
+							html += '<div class="collapsible-header' + (Report.charts.themeCategory === 'dark' ? ' grey darken-3 white-text' : '') + '">';
 							html += '<i class="material-icons">info</i>';
 							html += 'Alert&nbsp;' + (index+1) + '&nbsp;&ndash;&nbsp;' + item.alert;
 							if (typeof item.uri !== 'undefined') {
@@ -1230,7 +1230,7 @@ $(function (event) {
 						var item = site.alerts.alertitem;
 
 						html += '<li>';
-						html += '<div class="collapsible-header">';
+						html += '<div class="collapsible-header' + (Report.charts.themeCategory === 'dark' ? ' grey darken-3 white-text' : '') + '">';
 						html += '<i class="material-icons">info</i>';
 						html += 'Alert&nbsp;1&nbsp;&ndash;&nbsp;' + item.alert;
 						if (typeof item.uri !== 'undefined') {
