@@ -75,6 +75,7 @@
 					</ul>
 					<ul id="app-menu" class="dropdown-content">
 						<li><a href="#!" class="light-blue-text text-accent-4" onclick="window.location.reload();"><i class="material-icons">refresh</i>Reload</a></li>
+						<li><a href="#!" class="light-blue-text text-accent-4" onclick="$('#toggle-container').trigger('click');"><i class="material-icons">aspect_ratio</i>Change display size</a></li>
 						<li class="divider"></li>
 						<li><a href="#!" class="light-blue-text text-accent-4">Français</a></li>
 						<li><a href="#!" class="light-blue-text text-accent-4">English</a></li>
@@ -115,13 +116,13 @@
 	<main>
 		<div id="dyn-container" class="container">
 			<div class="hide-on-med-and-down">
-				<p class="flow-text">Welcome and thanks for using my tool.<br>To convert your report, just select an import method below.</p>
-				<p class="flow-text">Click on the button to redistribute the space. <small>(<a href="#!" onclick="$(this).parent().parent().css('display', 'none');">Dismiss</a>)</small><br><a href="#!" id="toggle-container" class="waves-effect waves-light btn light-blue accent-4 white-text">Enlarge</a></p>
+				<p class="flow-text">To convert your report, just select an import method below.</p>
+				<p class="flow-text">Click on the button to redistribute the space. <small>(<a href="#!" onclick="$(this).parent().parent().css('display', 'none');">Dismiss</a>)</small>&nbsp;<a href="#!" id="toggle-container" class="waves-effect waves-light btn light-blue accent-4 white-text">Enlarge</a></p>
 			</div>
 			<div class="hide-on-large-only">
 				<p class="flow-text">Welcome and thanks for using my tool.<br>To convert your report, just select an import method below.</p>
 			</div>
-			<fieldset>
+			<fieldset id="report-source">
 				<legend>Report Source</legend>
 				<div class="row" style="margin-bottom: 0;">
 					<div class="col s12">
@@ -183,7 +184,7 @@
 					</div>
 				</div>
 			</fieldset>
-			<fieldset id="report-fieldset" style="display: none;">
+			<fieldset id="report-data" style="display: none;">
 				<legend>Converted Report</legend>
 				<div class="progress blue lighten-5" style="display: none;">
 					<div class="indeterminate light-blue"></div>
@@ -198,6 +199,7 @@
 				<div class="col l6 s12">
 					<h5 class="white-text">ZAP Friendly Report</h5>
 					<p class="grey-text text-lighten-4">Designed to ease the display and the understanding of your reports.</p>
+					<p class="grey-text text-lighten-4">Thanks a lot for using my tool.</p>
 				</div>
 				<div class="col l2 offset-l2 s6">
 					<h5 class="white-text">Links</h5>
