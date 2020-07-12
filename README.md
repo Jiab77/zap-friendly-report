@@ -17,7 +17,7 @@ TODO:
 - [X] Finish the main form
 - [X] Fix `dark` theme
 - [X] Fix charts `style` issues
-- [ ] Fix `dark` theme not applied when the report is loaded before theme selection
+- [X] Fix `dark` theme not applied when the report is loaded after theme selection
 
 What's missing:
 
