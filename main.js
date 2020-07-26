@@ -1171,7 +1171,7 @@ $(function (event) {
 									html += '<span style="text-decoration: underline;">Instances:</span><br>';
 
 									// Create table for instances
-									html += '<table>';
+									html += '<table class="bordered responsive-table">';
 									html += '<thead>';
 									html += '<tr>';
 									html += '<th>Method</th>';
@@ -1229,6 +1229,7 @@ $(function (event) {
 									// End of instances table
 									html += '</tbody>';
 									html += '</table>';
+									html += '<br>';
 								}
 							}
 							if (typeof item.otherinfo !== 'undefined') {
@@ -1331,7 +1332,7 @@ $(function (event) {
 								html += '<span style="text-decoration: underline;">Instances:</span><br>';
 
 								// Create table for instances
-								html += '<table>';
+								html += '<table class="bordered responsive-table">';
 								html += '<thead>';
 								html += '<tr>';
 								html += '<th>Method</th>';
@@ -1391,6 +1392,7 @@ $(function (event) {
 								// End of instances table
 								html += '</tbody>';
 								html += '</table>';
+								html += '<br>';
 							}
 						}
 						if (typeof item.otherinfo !== 'undefined') {
