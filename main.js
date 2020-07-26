@@ -1166,7 +1166,73 @@ $(function (event) {
 								html += '<span style="text-decoration: underline;">Description:</span><br>';
 								html += item.desc;
 							}
+							if (typeof item.instances !== 'undefined') {
+								if (typeof item.instances === 'object') {
+									html += '<span style="text-decoration: underline;">Instances:</span><br>';
+
+									// Create table for instances
+									html += '<table>';
+									html += '<thead>';
+									html += '<tr>';
+									html += '<th>Method</th>';
+									if ((Array.isArray(item.instances.instance) && typeof item.instances.instance[0].param !== 'undefined') ||
+										(typeof item.instances.instance === 'object' && typeof item.instances.instance.param !== 'undefined')) {
+											html += '<th>Param</th>';
+									}
+									if ((Array.isArray(item.instances.instance) && typeof item.instances.instance[0].evidence !== 'undefined') ||
+										(typeof item.instances.instance === 'object' && typeof item.instances.instance.evidence !== 'undefined')) {
+											html += '<th>Evidence</th>';
+									}
+									html += '<th>URI</th>';
+									html += '</tr>';
+									html += '</thead>';
+									html += '<tbody>';
+
+									// Several instances found
+									if (Array.isArray(item.instances.instance)) {
+	
+										// Iterate over found instances
+										item.instances.instance.forEach(function (instance, index) {
+											if (Settings.debug === true) {
+												console.log(index, instance);
+											}
+	
+											html += '<tr>';
+											html += '<td>' + instance.method + '</td>';
+
+											if (typeof instance.param !== 'undefined') {
+												html += '<td>' + instance.param + '</td>';
+											}
+											if (typeof instance.evidence !== 'undefined') {
+												html += '<td>' + Report.escapeHtml(instance.evidence) + '</td>';
+											}
+											
+											html += '<td><a href="' + instance.uri + '" target="_blank">' + instance.uri + '</a></td>';
+											html += '</tr>';
+										});
+									}
+
+									// Only one instance found
+									else {
+										html += '<tr>';
+										html += '<td>' + item.instances.instance.method + '</td>';
+										if (typeof item.instances.instance.param !== 'undefined') {
+											html += '<td>' + item.instances.instance.param + '</td>';
+										}
+										if (typeof item.instances.instance.evidence !== 'undefined') {
+											html += '<td>' + Report.escapeHtml(item.instances.instance.evidence) + '</td>';
+										}
+										html += '<td><a href="' + item.instances.instance.uri + '" target="_blank">' + item.instances.instance.uri + '</a></td>';
+										html += '</tr>';
+									}
+
+									// End of instances table
+									html += '</tbody>';
+									html += '</table>';
+								}
+							}
 							if (typeof item.otherinfo !== 'undefined') {
+								html += '<span style="text-decoration: underline;">Other info:</span><br>';
 								html += '<blockquote>';
 								html += '<p>' + item.otherinfo + '</p>';
 								html += '</blockquote>';
@@ -1260,7 +1326,75 @@ $(function (event) {
 							html += '<span style="text-decoration: underline;">Description:</span><br>';
 							html += item.desc;
 						}
+						if (typeof item.instances !== 'undefined') {
+							if (typeof item.instances === 'object') {
+								html += '<span style="text-decoration: underline;">Instances:</span><br>';
+
+								// Create table for instances
+								html += '<table>';
+								html += '<thead>';
+								html += '<tr>';
+								html += '<th>Method</th>';
+								if ((Array.isArray(item.instances.instance) && typeof item.instances.instance[0].param !== 'undefined') ||
+									(typeof item.instances.instance === 'object' && typeof item.instances.instance.param !== 'undefined')) {
+										html += '<th>Param</th>';
+								}
+								if ((Array.isArray(item.instances.instance) && typeof item.instances.instance[0].evidence !== 'undefined') ||
+									(typeof item.instances.instance === 'object' && typeof item.instances.instance.evidence !== 'undefined')) {
+										html += '<th>Evidence</th>';
+								}
+								html += '<th>URI</th>';
+								html += '</tr>';
+								html += '</thead>';
+								html += '<tbody>';
+
+								// Several instances found
+								if (Array.isArray(item.instances.instance)) {
+
+									// Iterate over found instances
+									item.instances.instance.forEach(function (instance, index) {
+										if (Settings.debug === true) {
+											console.log(index, instance);
+										}
+
+										html += '<tr>';
+										html += '<td>' + instance.method + '</td>';
+
+										if (typeof instance.param !== 'undefined') {
+											html += '<td>' + instance.param + '</td>';
+										}
+										if (typeof instance.evidence !== 'undefined') {
+											html += '<td>' + Report.escapeHtml(instance.evidence) + '</td>';
+										}
+
+										html += '<td><a href="' + instance.uri + '" target="_blank">' + instance.uri + '</a></td>';
+										html += '</tr>';
+									});
+								}
+
+								// Only one instance found
+								else {
+									html += '<tr>';
+									html += '<td>' + item.instances.instance.method + '</td>';
+
+									if (typeof item.instances.instance.param !== 'undefined') {
+										html += '<td>' + item.instances.instance.param + '</td>';
+									}
+									if (typeof item.instances.instance.evidence !== 'undefined') {
+										html += '<td>' + Report.escapeHtml(item.instances.instance.evidence) + '</td>';
+									}
+
+									html += '<td><a href="' + item.instances.instance.uri + '" target="_blank">' + item.instances.instance.uri + '</a></td>';
+									html += '</tr>';
+								}
+
+								// End of instances table
+								html += '</tbody>';
+								html += '</table>';
+							}
+						}
 						if (typeof item.otherinfo !== 'undefined') {
+							html += '<span style="text-decoration: underline;">Other info:</span><br>';
 							html += '<blockquote>';
 							html += '<p>' + item.otherinfo + '</p>';
 							html += '</blockquote>';
