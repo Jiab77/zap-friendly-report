@@ -207,4 +207,4 @@ The people who helped me to make this project better and better.
 
 ## Contact
 
-You can reach me by email at jonathan.barda+zaproxy@gmail.com or on Twitter [@Jiab77](https://twitter.com/Jiab77)
+* [Twitter](https://twitter.com/Jiab77)
